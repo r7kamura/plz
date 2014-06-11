@@ -1,5 +1,7 @@
 require "active_support/core_ext/string/strip"
+require "json"
 require "pathname"
+require "yaml"
 
 require "plz/error"
 require "plz/command"
