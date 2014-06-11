@@ -1,5 +1,5 @@
 # Plz
-JSON Schema based cURL-like tool.
+JSON Schema based command line HTTP client.
 
 ## Usage
 

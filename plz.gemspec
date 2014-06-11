@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = Plz::VERSION
   spec.authors       = ["Ryo Nakamura"]
   spec.email         = ["r7kamura@gmail.com"]
-  spec.summary       = "JSON Schema based cURL-like tool"
+  spec.summary       = "JSON Schema based command line HTTP client."
   spec.homepage      = "https://github.com/r7kamura/plz"
   spec.license       = "MIT"
 
