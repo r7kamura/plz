@@ -1,29 +1,29 @@
 # Plz
+JSON Schema based cURL-like tool.
 
-TODO: Write a gem description
+```sh
+$ plz list user
+[
+  {
+    "id": 1,
+    "name": "alice"
+  },
+]
 
-## Installation
+$ plz show user id=1
+{
+  "id": 1,
+  "title": "alice"
+}
 
-Add this line to your application's Gemfile:
+$ plz create user name=bob
+{
+  "id": 2
+  "name": "bob"
+}
+```
 
-    gem 'plz'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install plz
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/plz/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+## Install
+```sh
+$ gem install plz
+```
