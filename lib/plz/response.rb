@@ -1,7 +1,7 @@
 module Plz
   class Response
     TEMPLATE = <<-EOS.strip_heredoc
-      HTTP/1.1 %{status_code} %{status_in_words}
+      HTTP/1.1 %{status}
       %{headers}
 
       %{body}
@@ -13,10 +13,9 @@ module Plz
     end
 
     # @return [String]
-    def to_s
+    def render
       TEMPLATE % {
-        status_code: status_code,
-        status_in_words: status_in_words,
+        status: status,
         headers: headers.join("\n"),
         body: body,
       }
@@ -30,10 +29,15 @@ module Plz
         key
       end.map do |key, value|
         "%{key}: %{value}" % {
-          key: key.split("-").map(&:camelize).join("-"),
+          key: Rainbow(key.split("-").map(&:camelize).join("-")).underline,
           value: value,
         }
       end
+    end
+
+    # @return [String]
+    def status
+      Rainbow("#{status_code} #{status_in_words}").bright
     end
 
     # @return [Fixnum]
@@ -43,11 +47,19 @@ module Plz
 
     # @return [String] Words for its status code
     def status_in_words
-      Rack::Utils::HTTP_STATUS_CODES[status_code]
+      Rack::Utils::HTTP_STATUS_CODES[@raw.status]
     end
 
     # @return [String]
     def body
+      Rouge::Formatters::Terminal256.format(
+        Rouge::Lexers::Javascript.new.lex(plain_body),
+        theme: "github"
+      )
+    end
+
+    # @return [String] Pretty-printed JSON body
+    def plain_body
       JSON.pretty_generate(@raw.body)
     end
   end

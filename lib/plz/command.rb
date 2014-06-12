@@ -16,7 +16,7 @@ module Plz
     # Sends an HTTP request and logs out the response
     def call
       raw = client.send(@method.downcase, @path, @params, @headers)
-      puts Response.new(raw)
+      puts Response.new(raw).render
     end
 
     private

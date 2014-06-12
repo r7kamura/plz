@@ -6,6 +6,8 @@ require "json"
 require "json_schema"
 require "pathname"
 require "rack"
+require "rainbow"
+require "rouge"
 require "yaml"
 
 require "plz/error"
