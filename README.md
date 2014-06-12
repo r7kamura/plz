@@ -1,7 +1,6 @@
 # Plz
 JSON Schema based command line HTTP client.
 
-## Usage
 ![screenshot](images/screenshot.png)
 
 ### Install
@@ -30,6 +29,7 @@ $ plz <action> <target> [headers|params]
 To use Plz, you need to have a JSON Schema file at `./schema.json` or `./schema.yaml`,
 that describes about the API where you want to send HTTP request.
 Plz interprets command-line arguments based on that JSON Schema, then sends HTTP request.
+See [schema.yml](schema.yml) as an example.
 
 ### Example
 ```sh
