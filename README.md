@@ -2,6 +2,7 @@
 JSON Schema based command line HTTP client.
 
 ## Usage
+![screenshot](images/screenshot.png)
 
 ### Install
 ```sh
