@@ -24,6 +24,8 @@ module Plz
     private
 
     # @return [Array<String>]
+    # @example
+    #   headers #=> ["Content-Type: application/json"]
     def headers
       @raw.headers.sort_by do |key, value|
         key
