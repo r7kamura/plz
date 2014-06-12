@@ -1,6 +1,6 @@
 module Plz
   class CommandBuilder
-    SCHEMA_FILE_PATH_PATTERN = "{.,config}/schema.{json,yml}"
+    SCHEMA_FILE_PATH_PATTERN = "schema.{json,yml}"
 
     # Builds callable command object from given ARGV
     # @return [Plz::Command]
