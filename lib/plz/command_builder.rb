@@ -41,11 +41,13 @@ module Plz
       when !has_schema_file?
         raise SchemaFileNotFound
       when !has_decodable_schema_file?
-        raise UndecodableSchemaFile, schema_file_pathname
+        raise UndecodableSchemaFile, pathname: schema_file_pathname
       when !has_valid_schema_file?
-        raise InvalidSchema, schema_file_pathname
+        raise InvalidSchema, pathname: schema_file_pathname
       when !has_base_url?
-        raise BaseUrlNotFound, schema_file_pathname
+        raise BaseUrlNotFound, pathname: schema_file_pathname
+      when !has_link?
+        raise LinkNotFound, pathname: schema_file_pathname, action_name: action_name, target_name: target_name
       end
     end
 
@@ -77,6 +79,11 @@ module Plz
     # @return [true, false] True if given JSON Schema has a link of base URL of API
     def has_base_url?
       !!base_url
+    end
+
+    # @return [true, false] True if any link for given action and target found
+    def has_link?
+      !!link
     end
 
     # @return [Hash]
@@ -127,14 +134,14 @@ module Plz
     # @example
     #   path #=> "/users"
     def path
-      current_link.href
+      link.href
     end
 
     # @return [String]
     # @example
     #   method #=> "GET"
     def method
-      current_link.method.to_s.upcase
+      link.method.to_s.upcase
     end
 
     # Extracts the base url of the API
@@ -150,8 +157,8 @@ module Plz
     end
 
     # @return [JsonSchema::Schema::Link, nil]
-    def current_link
-      @current_link ||= json_schema.properties.find do |key, schema|
+    def link
+      @link ||= json_schema.properties.find do |key, schema|
         if key == target_name
           schema.links.find do |link|
             if link.href && link.method && link.title.underscore == action_name
@@ -191,7 +198,7 @@ module Plz
     end
 
     class InvalidSchema < Error
-      def initialize(pathname)
+      def initialize(pathname: pathname)
         @pathname = pathname
       end
     end
@@ -211,6 +218,18 @@ module Plz
     class BaseUrlNotFound < InvalidSchema
       def to_s
         "#{@pathname} has no base URL at top-level links property"
+      end
+    end
+
+    class LinkNotFound < InvalidSchema
+      def initialize(action_name: action_name, target_name: target_name, **args)
+        super(**args)
+        @action_name = action_name
+        @target_name = target_name
+      end
+
+      def to_s
+        "#{@pathname} has no definition for `#{@action_name} #{@target_name}`"
       end
     end
   end
