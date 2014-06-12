@@ -74,8 +74,8 @@ properties:
     "$ref": "#/definitions/user"
 type:
 - object
-description: API server for TQKey
+description: Example API for Plz
 links:
 - href: http://localhost:8080
   rel: self
-title: Dummy API
+title: Example API
