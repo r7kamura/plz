@@ -13,10 +13,10 @@ module Plz
       @path = path
     end
 
-    # TODO
     # Sends an HTTP request and logs out the response
     def call
-      puts client.send(@method.downcase, @path, @params, @headers).body
+      raw = client.send(@method.downcase, @path, @params, @headers)
+      puts Response.new(raw)
     end
 
     private
@@ -25,6 +25,7 @@ module Plz
     def client
       Faraday.new(url: @base_url) do |connection|
         connection.request :json
+        connection.response :json
         connection.adapter :net_http
       end
     end
