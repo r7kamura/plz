@@ -110,21 +110,7 @@ module Plz
     end
 
     class Error < Error
-      USAGE = <<-EOS.strip_heredoc
-        $ plz <action> <target> [headers|params]
-                  |        |         |      |
-                  |        |         |      `---- key=value ({"key":"value"}) or key:=value ({"key":value})
-                  |        |         |            params can be:
-                  |        |         |            * URI Template variable
-                  |        |         |            * Query string in GET method
-                  |        |         |            * Request body in other methods
-                  |        |         |
-                  |        |         `----------- Key:value
-                  |        |
-                  |        `--------------------- target resource name (e.g. user, recipe, etc.)
-                  |
-                  `------------------------------ action name (e.g. show, list, create, delete, etc.)
-      EOS
+      USAGE = "Usage: plz <action> <target> [headers|params]"
     end
 
     class NoActionName < Error
