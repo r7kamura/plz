@@ -1,5 +1,9 @@
+require "active_support/core_ext/string/inflections"
 require "active_support/core_ext/string/strip"
+require "faraday"
+require "faraday_middleware"
 require "json"
+require "json_schema"
 require "pathname"
 require "yaml"
 

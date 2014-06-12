@@ -1,0 +1,81 @@
+---
+"$schema": http://json-schema.org/draft-04/hyper-schema
+definitions:
+  user:
+    title: User
+    description: Each user who is managed by us
+    type:
+    - object
+    required:
+    - id
+    definitions:
+      id:
+        description: Auto incremental unique ID
+        example: 1
+        readOnly: true
+        type:
+        - integer
+      name:
+        description: Human readable user name
+        example: alice
+        type:
+        - string
+      home:
+        description: True if the user exists in the location
+        example: true
+        type:
+        - boolean
+      email:
+        description: Email for fetching gravator icon
+        example: alice@example.com
+        type:
+        - string
+      updated_at:
+        description: When this resource is updated
+        example: "2014-06-10T21:05:20+09:00"
+        readOnly: true
+        format: date-time
+        type:
+        - string
+    links:
+    - description: List all users
+      href: "/users"
+      method: GET
+      rel: instances
+      title: List
+    - description: Create a new user
+      href: "/users"
+      method: POST
+      rel: create
+      title: Create
+    - description: Update the user
+      href: "/users/{(#/definitions/users/definitions/id)}"
+      method: PATCH
+      rel: update
+      title: Update
+    - description: Delete the user
+      href: "/users/{(#/definitions/users/definitions/id)}"
+      method: DELETE
+      rel: delete
+      title: Delete
+    properties:
+      id:
+        "$ref": "#/definitions/user/definitions/id"
+      name:
+        "$ref": "#/definitions/user/definitions/name"
+      home:
+        "$ref": "#/definitions/user/definitions/home"
+      email:
+        "$ref": "#/definitions/user/definitions/email"
+      updated_at:
+        "$ref": "#/definitions/user/definitions/updated_at"
+properties:
+  user:
+    "$ref": "#/definitions/user"
+type:
+- object
+description: API server for TQKey
+links:
+- href: http://localhost:8080
+  rel: self
+title: Dummy API
