@@ -30,7 +30,7 @@ module Plz
       end.map do |key, value|
         "%{key}: %{value}" % {
           key: Rainbow(key.split("-").map(&:camelize).join("-")).underline,
-          value: value,
+          value: Rainbow(value).green,
         }
       end
     end
