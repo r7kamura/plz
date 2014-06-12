@@ -19,11 +19,11 @@ module Plz
     def call
       validate!
       Command.new(
-        action_name: action_name,
-        target_name: target_name,
+        method: method,
+        base_url: base_url,
+        path: path,
         headers: headers,
         params: params,
-        schema: schema,
       )
     rescue Error => error
       ErrorCommand.new(error)
@@ -40,8 +40,12 @@ module Plz
         raise NoTargetName
       when !has_schema_file?
         raise SchemaFileNotFound
+      when !has_decodable_schema_file?
+        raise UndecodableSchemaFile, schema_file_pathname
       when !has_valid_schema_file?
-        raise InvalidSchemaFile, schema_file_pathname
+        raise InvalidSchema, schema_file_pathname
+      when !has_base_url?
+        raise BaseUrlNotFound, schema_file_pathname
       end
     end
 
@@ -60,9 +64,19 @@ module Plz
       !!schema_file_pathname
     end
 
-    # @return [true, false] True if no error occured in parsing schema file
+    # @return [true, false] True if no error occured in parsing schema file as JSON Schema
     def has_valid_schema_file?
+      !!json_schema
+    end
+
+    # @return [true, false] True if no error occured in decoding schema file
+    def has_decodable_schema_file?
       !!schema
+    end
+
+    # @return [true, false] True if given JSON Schema has a link of base URL of API
+    def has_base_url?
+      !!base_url
     end
 
     # @return [Hash]
@@ -109,6 +123,51 @@ module Plz
     def headers
     end
 
+    # @return [String]
+    # @example
+    #   path #=> "/users"
+    def path
+      current_link.href
+    end
+
+    # @return [String]
+    # @example
+    #   method #=> "GET"
+    def method
+      current_link.method.to_s.upcase
+    end
+
+    # Extracts the base url of the API
+    # @return [String, nil]
+    # @example
+    #   base_url #=> "https://api.example.com/"
+    def base_url
+      @base_url ||= json_schema.links.find do |link|
+        if link.href && link.rel == "self"
+          return link.href
+        end
+      end
+    end
+
+    # @return [JsonSchema::Schema::Link, nil]
+    def current_link
+      @current_link ||= json_schema.properties.find do |key, schema|
+        if key == target_name
+          schema.links.find do |link|
+            if link.href && link.method && link.title.underscore == action_name
+              return link
+            end
+          end
+        end
+      end
+    end
+
+    # @return [JsonSchema::Schema, nil]
+    def json_schema
+      @json_schema ||= JsonSchema.parse!(@schema).tap(&:expand_references!)
+    rescue JsonSchema::SchemaError
+    end
+
     class Error < Error
       USAGE = "Usage: plz <action> <target> [headers|params]"
     end
@@ -131,13 +190,27 @@ module Plz
       end
     end
 
-    class InvalidSchemaFile < Error
+    class InvalidSchema < Error
       def initialize(pathname)
         @pathname = pathname
       end
+    end
 
+    class UndecodableSchemaFile < InvalidSchema
       def to_s
-        "Failed to parse #{@pathname}"
+        "Failed to decode #{@pathname}"
+      end
+    end
+
+    class InvalidSchemaFile < InvalidSchema
+      def to_s
+        "#{@pathname} was invalid JSON Schema"
+      end
+    end
+
+    class BaseUrlNotFound < InvalidSchema
+      def to_s
+        "#{@pathname} has no base URL at top-level links property"
       end
     end
   end
