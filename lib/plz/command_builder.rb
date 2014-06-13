@@ -10,9 +10,17 @@ module Plz
       new(arguments).call
     end
 
-    # @param [Array<String>] ARGV
-    def initialize(arguments)
-      @arguments = arguments
+    delegate(
+      :action_name,
+      :target_name,
+      :headers,
+      :params,
+      to: :arguments,
+    )
+
+    # @param argv [Array<String>] Raw ARGV
+    def initialize(argv)
+      @argv = argv
     end
 
     # @return [Plz::Command] Callable command object
@@ -109,27 +117,6 @@ module Plz
       @schema_file_pathname ||= Pathname.glob(SCHEMA_FILE_PATH_PATTERN).first
     end
 
-    # @return [String, nil] Given action name
-    def action_name
-      ARGV[0]
-    end
-
-    # @return [String, nil] Given target name
-    def target_name
-      ARGV[1]
-    end
-
-    # TODO
-    # @return [Hash] Params made from given arguments
-    def params
-      {}
-    end
-
-    # TODO
-    # @return [Hash] Headers made from given arguments
-    def headers
-    end
-
     # @return [String]
     # @example
     #   path #=> "/users"
@@ -173,6 +160,11 @@ module Plz
     def json_schema
       @json_schema ||= JsonSchema.parse!(@schema).tap(&:expand_references!)
     rescue JsonSchema::SchemaError
+    end
+
+    # @return [Plz::Arguments] Wrapper of Raw ARGV
+    def arguments
+      @arguments ||= Arguments.new(@argv)
     end
   end
 end

@@ -1,3 +1,4 @@
+require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 require "active_support/core_ext/string/strip"
 require "faraday"
@@ -11,6 +12,7 @@ require "rouge"
 require "yaml"
 
 require "plz/error"
+require "plz/arguments"
 require "plz/command"
 require "plz/command_builder"
 require "plz/error_command"
