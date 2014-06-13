@@ -31,7 +31,7 @@ module Plz
         base_url: base_url,
         path: path,
         headers: headers,
-        params: params,
+        params: request_params,
       )
     rescue Error => error
       ErrorCommand.new(error)
@@ -121,7 +121,40 @@ module Plz
     # @example
     #   path #=> "/users"
     def path
-      link.href
+      path_with_template % path_params.symbolize_keys
+    end
+
+    # @return [String]
+    # @example
+    #   path_with_template #=> "/apps/%{id}"
+    def path_with_template
+      link.href.gsub(/{(.+)}/) do |matched|
+        key = CGI.unescape($1).gsub(/[()]/, "").split("/").last
+        "%{#{key}}"
+      end
+    end
+
+    # @return [Array<String>] Parameter names required for path
+    # @exmaple
+    #   path_keys #=> ["id"]
+    def path_keys
+      link.href.scan(/{(.+)}/).map do |str|
+        CGI.unescape($1).gsub(/[()]/, "").split("/").last
+      end
+    end
+
+    # @return [Hash] Params to be embedded into path
+    # @example
+    #   path_params #=> { "id" => 1 }
+    def path_params
+      params.slice(*path_keys)
+    end
+
+    # @return [Hash] Params to be used for request body or query string
+    # @example
+    #   request_params #=> { "name" => "example" }
+    def request_params
+      params.except(*path_keys)
     end
 
     # @return [String]
