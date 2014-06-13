@@ -1,3 +1,6 @@
+## 0.0.4
+* Implement headers & params parser
+
 ## 0.0.3
 * Color header value
 
