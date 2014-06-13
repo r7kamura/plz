@@ -1,3 +1,6 @@
+## 0.0.5
+* Support URI Template in API path
+
 ## 0.0.4
 * Implement headers & params parser
 
