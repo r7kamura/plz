@@ -21,8 +21,18 @@ module Plz
     end
   end
 
+  class UnparsableJsonParam < Error
+    def initialize(value: nil)
+      @value = value
+    end
+
+    def to_s
+      "Given `#{@value}` was not valid as JSON"
+    end
+  end
+
   class InvalidSchema < Error
-    def initialize(pathname: pathname)
+    def initialize(pathname: nil)
       @pathname = pathname
     end
   end

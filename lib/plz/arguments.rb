@@ -24,7 +24,7 @@ module Plz
           begin
             result.merge(key => JSON.parse(%<{"key":#{value}}>)["key"])
           rescue JSON::ParserError
-            raise UnparsableJsonParam, key: key, value: value
+            raise UnparsableJsonParam, value: value
           end
         when /(?<key>.+)=(?<value>.+)/ =~ section
           result.merge(key => value)
