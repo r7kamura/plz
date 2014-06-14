@@ -23,7 +23,7 @@ module Plz
           end.map do |link|
             str = "  plz #{link.title.underscore} #{target_name.underscore}"
             if key = link.href[/{(.+)}/, 1]
-              name = key.gsub(/[()]/, "").split("/").last
+              name = CGI.unescape(key).gsub(/[()]/, "").split("/").last
               if property = link.parent.properties[name]
                 if example = property.data["example"]
                   str << " #{name}=#{example.inspect}"
