@@ -49,12 +49,12 @@ definitions:
       rel: create
       title: Create
     - description: Update the user
-      href: "/users/{(#/definitions/users/definitions/id)}"
+      href: "/users/{(#/definitions/user/definitions/id)}"
       method: PATCH
       rel: update
       title: Update
     - description: Delete the user
-      href: "/users/{(#/definitions/users/definitions/id)}"
+      href: "/users/{(#/definitions/user/definitions/id)}"
       method: DELETE
       rel: delete
       title: Delete
