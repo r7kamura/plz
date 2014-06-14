@@ -1,3 +1,6 @@
+## 0.0.7
+* Add command examples in help message
+
 ## 0.0.6
 * Better error handling
 * Add some command line options
