@@ -26,7 +26,7 @@ module Plz
               name = CGI.unescape(key).gsub(/[()]/, "").split("/").last
               if property = link.parent.properties[name]
                 if example = property.data["example"]
-                  str << " #{name}=#{example.inspect}"
+                  str << " #{name}=#{example}"
                 end
               end
             end
