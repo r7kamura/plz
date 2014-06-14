@@ -12,8 +12,9 @@ module Plz
       @raw = raw
     end
 
+    # @param options [Hash] Options to change renderer behavior
     # @return [String]
-    def render
+    def render(options = {})
       TEMPLATE % {
         status: status,
         headers: headers.join("\n"),

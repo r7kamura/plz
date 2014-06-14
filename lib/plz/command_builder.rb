@@ -26,6 +26,7 @@ module Plz
 
     # @return [Plz::Command] Callable command object
     def call
+      exit_if_help
       validate!
       Command.new(
         method: method,
@@ -33,6 +34,7 @@ module Plz
         path: path,
         headers: headers,
         params: request_params,
+        options: options,
       )
     rescue Error => error
       ErrorCommand.new(error)
@@ -199,6 +201,19 @@ module Plz
     # @return [Plz::Arguments] Wrapper of Raw ARGV
     def arguments
       @arguments ||= Arguments.new(@argv)
+    end
+
+    # @return [Hash] Command line options
+    def options
+      @options ||= Slop.parse!(@argv, help: true) do
+        banner Error::USAGE
+        on "response-header=", "Show response header (default: false)"
+      end.to_hash
+    end
+
+    # Display the help message and exits the program if --help or -h given
+    def exit_if_help
+      options
     end
   end
 end

@@ -11,6 +11,7 @@ require "pathname"
 require "rack"
 require "rainbow"
 require "rouge"
+require "slop"
 require "yaml"
 
 require "plz/error"
