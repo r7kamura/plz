@@ -23,9 +23,10 @@ module Plz
           end.map do |link|
             str = "  plz #{link.title.underscore} #{target_name}"
             if key = link.href[/{(.+)}/, 1]
-              name = CGI.unescape(key).gsub(/[()]/, "").split("/").last
-              if property = link.parent.properties[name]
-                if example = property.data["example"]
+              path = CGI.unescape(key).gsub(/[()]/, "")
+              name = path.split("/").last
+              if property = JsonPointer.evaluate(@schema.data, path)
+                if example = property["example"]
                   str << " #{name}=#{example}"
                 end
               end
