@@ -17,6 +17,8 @@ module Plz
     def call
       raw = client.send(@method.downcase, @path, @params, @headers)
       puts Response.new(raw).render
+    rescue Faraday::ConnectionFailed => exception
+      puts exception
     end
 
     private
