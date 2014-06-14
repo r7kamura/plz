@@ -8,12 +8,16 @@ module Plz
     # @param status [Fixnum] Status code
     # @param headers [Hash] Response header fields
     # @param body [Array, Hash] JSON decoded response body
-    def initialize(status: nil, headers: nil, body: nil, response_header: false, color: true)
+    # @param response_header [true, false] Flag to show response header
+    # @param response_body [true, false] Flag to show response body
+    # @param color [true, false] Flag to color response body
+    def initialize(status: nil, headers: nil, body: nil, response_header: nil, response_body: nil, color: nil)
       @status = status
       @headers = headers
       @body = body
-      @response_header = response_header
-      @color = color
+      @show_response_header = response_header
+      @show_response_body = response_body
+      @color_response = color
     end
 
     # Renders response with given options
@@ -30,16 +34,14 @@ module Plz
 
     # @return [String] Template for embedding variables, changing by options
     def template
-      if @response_header
-        <<-EOS.strip_heredoc
-          HTTP/1.1 %{status}
-          %{headers}
-
-          %{body}
-        EOS
-      else
-        "%{body}"
-      end
+      str = ""
+      str << <<-EOS.strip_heredoc if @show_response_header
+        HTTP/1.1 %{status}
+        %{headers}
+      EOS
+      str << "\n" if @show_response_header && @show_response_body
+      str << "%{body}" if @show_response_body
+      str
     end
 
     # @return [String]
@@ -68,7 +70,7 @@ module Plz
 
     # @return [String]
     def body
-      if @color
+      if @color_response
         Rouge::Formatters::Terminal256.format(
           Rouge::Lexers::Javascript.new.lex(plain_body),
           theme: "github"
@@ -80,12 +82,12 @@ module Plz
 
     # @return [String] Pretty-printed JSON body
     def plain_body
-      JSON.pretty_generate(@body)
+      JSON.pretty_generate(@body) + "\n"
     end
 
     # Overridden to disable coloring
     def Rainbow(str)
-      if @color
+      if @color_response
         super
       else
         Rainbow::NullPresenter.new(str.to_s)

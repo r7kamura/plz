@@ -18,11 +18,12 @@ module Plz
     # Sends an HTTP request and logs out the response
     def call
       response = client.send(@method.downcase, @path, @params, @headers)
-      puts ResponseRenderer.call(
+      print ResponseRenderer.call(
         status: response.status,
         headers: response.headers,
         body: response.body,
         response_header: flag_to_show_response_header,
+        response_body: flag_to_show_response_body,
         color: flag_to_color_response,
       )
     rescue Faraday::ConnectionFailed => exception
@@ -43,6 +44,11 @@ module Plz
     # @return [true, false]
     def flag_to_show_response_header
       !@options[:"no-response-header"]
+    end
+
+    # @return [true, false]
+    def flag_to_show_response_body
+      !@options[:"no-response-body"]
     end
 
     # @return [true, false]
