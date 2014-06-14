@@ -54,6 +54,23 @@ while `key:=value` is parsed into JSON value (e.g. key:=17 will be `{"key":17}`)
 $ plz create user name=alice age:=17
 ```
 
+### Options
+Plz takes some command line options.
+
+```sh
+$ plz --help
+Usage: plz <action> <target> [headers|params] [options]
+    -h, --help                    Display help message
+        --no-color                Disable coloring output
+        --no-response-body        Hide response body
+        --no-response-header      Hide response header
+Examples:
+  plz list user
+  plz create user
+  plz update user
+  plz delete user
+```
+
 ### Example
 ```sh
 # GET /users
