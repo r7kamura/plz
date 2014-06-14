@@ -10,19 +10,20 @@ $ gem install plz
 
 ### Synopsis
 ```sh
-$ plz <action> <target> [headers|params]
+$ plz <action> <target> [headers|params] [options]
+         |        |         |      |       |
+         |        |         |      |       `-- --no-response-header
+         |        |         |      |           --no-response-body
+         |        |         |      |           --no-color
+         |        |         |      |           --help, -h
          |        |         |      |
-         |        |         |      `---- key=value ({"key":"value"}) or key:=value ({"key":value})
-         |        |         |            params can be:
-         |        |         |            * URI Template variable
-         |        |         |            * Query string in GET method
-         |        |         |            * Request body in other methods
+         |        |         |      `---------- key=value or key:=value
          |        |         |
-         |        |         `----------- Key:value
+         |        |         `----------------- Key:value
          |        |
-         |        `--------------------- target resource name (e.g. user, recipe, etc.)
+         |        `--------------------------- target name
          |
-         `------------------------------ action name (e.g. show, list, create, delete, etc.)
+         `------------------------------------ action name
 ```
 
 ### Schema
@@ -30,6 +31,28 @@ To use Plz, you need to have a JSON Schema file at `./schema.json` or `./schema.
 that describes about the API where you want to send HTTP request.
 Plz interprets command-line arguments based on that JSON Schema, then sends HTTP request.
 See [schema.yml](schema.yml) as an example.
+
+### Headers
+To set custom request headers you can use `Key:value` syntax in command line argument.
+
+```sh
+$ plz list user Api-Access-Token:123
+```
+
+### Params
+Params are used for the following purpose:
+
+* URI Template variables
+* Query string in GET method
+* Request body in other methods
+
+You can set params by `key=value` or `key:=value` syntax in command line argument.
+`key=value` is parsed into String value,
+while `key:=value` is parsed into JSON value (e.g. key:=17 will be `{"key":17}`).
+
+```sh
+$ plz create user name=alice age:=17
+```
 
 ### Example
 ```sh
