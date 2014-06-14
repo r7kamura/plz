@@ -1,3 +1,11 @@
+## 0.0.6
+* Better error handling
+* Add some command line options
+ * `--help`
+ * `--no-color`
+ * `--no-response-header`
+ * `--no-response-body`
+
 ## 0.0.5
 * Support URI Template in API path
 
