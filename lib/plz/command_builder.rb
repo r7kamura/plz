@@ -27,6 +27,8 @@ module Plz
     # @return [Plz::Command] Callable command object
     def call
       case
+      when has_help?
+        Commands::Help.new(options: options)
       when !has_action_name?
         Commands::NoActionName.new
       when !has_target_name?
@@ -67,6 +69,11 @@ module Plz
     rescue UnparsableJsonParam => exception
       @json_parse_error = exception
       true
+    end
+
+    # @return [true, false] True if --help or -h given
+    def has_help?
+      options[:help]
     end
 
     # @return [true, false] True if given arguments include action name
@@ -214,17 +221,13 @@ module Plz
 
     # @return [Hash] Command line options
     def options
-      @options ||= Slop.parse!(@argv, help: true) do
+      @options ||= Slop.parse!(@argv) do
         banner Error::USAGE
-        on "no-response-header", "Hide response header"
-        on "no-response-body", "Hide response body"
+        on "h", "help", "Display help message"
         on "no-color", "Disable coloring output"
-      end.to_hash
-    end
-
-    # Display the help message and exits the program if --help or -h given
-    def exit_if_help
-      options
+        on "no-response-body", "Hide response body"
+        on "no-response-header", "Hide response header"
+      end
     end
   end
 end
