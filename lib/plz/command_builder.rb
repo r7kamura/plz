@@ -26,40 +26,47 @@ module Plz
 
     # @return [Plz::Command] Callable command object
     def call
-      exit_if_help
-      validate!
-      Command.new(
-        method: method,
-        base_url: base_url,
-        path: path,
-        headers: headers,
-        params: request_params,
-        options: options,
-      )
-    rescue Error => error
-      ErrorCommand.new(error)
+      case
+      when !has_action_name?
+        Commands::NoActionName.new
+      when !has_target_name?
+        Commands::NoTargetName.new
+      when !has_schema_file?
+        Commands::SchemaFileNotFound.new
+      when !has_decodable_schema_file?
+        Commands::UndecodableSchemaFile.new(pathname: schema_file_pathname)
+      when !has_valid_schema_file?
+        Commands::InvalidSchema.new(pathname: schema_file_pathname, error: @json_schema_error)
+      when !has_base_url?
+        Commands::BaseUrlNotFound.new(pathname: schema_file_pathname)
+      when !has_link?
+        Commands::LinkNotFound.new(
+          pathname: schema_file_pathname,
+          action_name: action_name,
+          target_name: target_name
+        )
+      when has_unparsable_json_param?
+        Commands::UnparsableJsonParam.new(error: @json_parse_error)
+      else
+        Commands::Request.new(
+          method: method,
+          base_url: base_url,
+          path: path,
+          headers: headers,
+          params: request_params,
+          options: options,
+        )
+      end
     end
 
     private
 
-    # @raise [Plz::Error] Raises if invalid arguments given
-    def validate!
-      case
-      when !has_action_name?
-        raise NoActionName
-      when !has_target_name?
-        raise NoTargetName
-      when !has_schema_file?
-        raise SchemaFileNotFound
-      when !has_decodable_schema_file?
-        raise UndecodableSchemaFile, pathname: schema_file_pathname
-      when !has_valid_schema_file?
-        raise InvalidSchema, pathname: schema_file_pathname
-      when !has_base_url?
-        raise BaseUrlNotFound, pathname: schema_file_pathname
-      when !has_link?
-        raise LinkNotFound, pathname: schema_file_pathname, action_name: action_name, target_name: target_name
-      end
+    def has_unparsable_json_param?
+      params
+      false
+    rescue UnparsableJsonParam => exception
+      @json_parse_error = exception
+      true
     end
 
     # @return [true, false] True if given arguments include action name
@@ -79,7 +86,7 @@ module Plz
 
     # @return [true, false] True if no error occured in parsing schema file as JSON Schema
     def has_valid_schema_file?
-      !!json_schema
+      !json_schema.nil?
     end
 
     # @return [true, false] True if no error occured in decoding schema file
@@ -195,7 +202,9 @@ module Plz
     # @return [JsonSchema::Schema, nil]
     def json_schema
       @json_schema ||= JsonSchema.parse!(@schema).tap(&:expand_references!)
-    rescue JsonSchema::SchemaError
+    rescue => exception
+      @json_schema_error = exception
+      nil
     end
 
     # @return [Plz::Arguments] Wrapper of Raw ARGV

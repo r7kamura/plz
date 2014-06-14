@@ -18,7 +18,7 @@ module Plz
     # @return [Hash] Params parsed from given arguments
     # @raise [Plz::UnparsableJsonParam]
     def params
-      ARGV[2..-1].inject({}) do |result, section|
+      @params ||= ARGV[2..-1].inject({}) do |result, section|
         case
         when /(?<key>.+):=(?<value>.+)/ =~ section
           begin
