@@ -21,7 +21,7 @@ module Plz
           schema.links.select do |link|
             link.href && link.method && link.title
           end.map do |link|
-            str = "  plz #{link.title.underscore} #{target_name.underscore}"
+            str = "  plz #{link.title.underscore} #{target_name}"
             if key = link.href[/{(.+)}/, 1]
               name = CGI.unescape(key).gsub(/[()]/, "").split("/").last
               if property = link.parent.properties[name]
