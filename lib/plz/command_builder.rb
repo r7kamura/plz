@@ -3,7 +3,8 @@ module Plz
     SCHEMA_FILE_PATH_PATTERN = "schema.{json,yml}"
 
     # Builds callable command object from given ARGV
-    # @return [Plz::Command]
+    # @return [Plz::Command, Plz::ErrorCommand]
+    # @note This is a shortcut for #call method
     # @example
     #   Plz::CommandBuilder.call(ARGV).call
     def self.call(arguments)
