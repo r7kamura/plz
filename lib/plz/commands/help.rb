@@ -18,11 +18,20 @@ module Plz
       # @return [Array<String>]
       def links
         @schema.properties.map do |target_name, schema|
-          schema.links.map do |link|
-            if link.href && link.method && link.title
-              "  plz #{link.title.underscore} #{target_name.underscore}"
+          schema.links.select do |link|
+            link.href && link.method && link.title
+          end.map do |link|
+            str = "  plz #{link.title.underscore} #{target_name.underscore}"
+            if key = link.href[/{(.+)}/, 1]
+              name = key.gsub(/[()]/, "").split("/").last
+              if property = link.parent.properties[name]
+                if example = property.data["example"]
+                  str << " #{name}=#{example.inspect}"
+                end
+              end
             end
-          end.compact
+            str
+          end
         end.flatten
       end
     end

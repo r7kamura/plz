@@ -67,8 +67,8 @@ Usage: plz <action> <target> [headers|params] [options]
 Examples:
   plz list user
   plz create user
-  plz update user
-  plz delete user
+  plz update user id=1
+  plz delete user id=1
 ```
 
 ### Example

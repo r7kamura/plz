@@ -1,3 +1,6 @@
+## 0.0.9
+* Show example args if URI Template and example value defined
+
 ## 0.0.8
 * Fix bug :bug:
 
