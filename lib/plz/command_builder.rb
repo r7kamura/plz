@@ -207,7 +207,7 @@ module Plz
     def options
       @options ||= Slop.parse!(@argv, help: true) do
         banner Error::USAGE
-        on "response-header=", "Show response header (default: false)"
+        on "response-header", "Show response header (default: false)"
       end.to_hash
     end
 

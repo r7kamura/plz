@@ -17,8 +17,13 @@ module Plz
 
     # Sends an HTTP request and logs out the response
     def call
-      raw = client.send(@method.downcase, @path, @params, @headers)
-      puts Response.new(raw).render(response_header: flag_to_show_response_header)
+      response = client.send(@method.downcase, @path, @params, @headers)
+      puts ResponseRenderer.call(
+        status: response.status,
+        headers: response.headers,
+        body: response.body,
+        response_header: flag_to_show_response_header,
+      )
     rescue Faraday::ConnectionFailed => exception
       puts exception
     end
@@ -36,7 +41,7 @@ module Plz
 
     # @return [true, false]
     def flag_to_show_response_header
-      !!@options[:response_header]
+      !!@options[:"response-header"]
     end
   end
 end
