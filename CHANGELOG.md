@@ -1,3 +1,6 @@
+## 0.1.1
+* Provide support for reading STDIN
+
 ## 0.1.0
 * Shape up --help feature
 
