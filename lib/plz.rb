@@ -16,7 +16,6 @@ require "yaml"
 
 require "plz/error"
 require "plz/arguments"
-require "plz/command"
 require "plz/command_builder"
 require "plz/commands/base_url_not_found"
 require "plz/commands/help"
