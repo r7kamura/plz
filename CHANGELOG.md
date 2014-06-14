@@ -1,3 +1,6 @@
+## 0.1.0
+* Shape up --help feature
+
 ## 0.0.9
 * Show example args if URI Template and example value defined
 
