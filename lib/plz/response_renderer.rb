@@ -8,11 +8,12 @@ module Plz
     # @param status [Fixnum] Status code
     # @param headers [Hash] Response header fields
     # @param body [Array, Hash] JSON decoded response body
-    def initialize(status: nil, headers: nil, body: nil, response_header: false)
+    def initialize(status: nil, headers: nil, body: nil, response_header: false, color: true)
       @status = status
       @headers = headers
       @body = body
       @response_header = response_header
+      @color = color
     end
 
     # Renders response with given options
@@ -67,15 +68,28 @@ module Plz
 
     # @return [String]
     def body
-      Rouge::Formatters::Terminal256.format(
-        Rouge::Lexers::Javascript.new.lex(plain_body),
-        theme: "github"
-      )
+      if @color
+        Rouge::Formatters::Terminal256.format(
+          Rouge::Lexers::Javascript.new.lex(plain_body),
+          theme: "github"
+        )
+      else
+        plain_body
+      end
     end
 
     # @return [String] Pretty-printed JSON body
     def plain_body
       JSON.pretty_generate(@body)
+    end
+
+    # Overridden to disable coloring
+    def Rainbow(str)
+      if @color
+        super
+      else
+        Rainbow::NullPresenter.new(str.to_s)
+      end
     end
   end
 end

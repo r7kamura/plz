@@ -23,6 +23,7 @@ module Plz
         headers: response.headers,
         body: response.body,
         response_header: flag_to_show_response_header,
+        color: flag_to_color_response,
       )
     rescue Faraday::ConnectionFailed => exception
       puts exception
@@ -42,6 +43,11 @@ module Plz
     # @return [true, false]
     def flag_to_show_response_header
       !!@options[:"response-header"]
+    end
+
+    # @return [true, false]
+    def flag_to_color_response
+      !@options[:"no-color"]
     end
   end
 end
