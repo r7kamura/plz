@@ -27,12 +27,6 @@ module Plz
     # @return [Plz::Command] Callable command object
     def call
       case
-      when has_help?
-        Commands::Help.new(options: options)
-      when !has_action_name?
-        Commands::NoActionName.new
-      when !has_target_name?
-        Commands::NoTargetName.new
       when !has_schema_file?
         Commands::SchemaFileNotFound.new
       when !has_decodable_schema_file?
@@ -41,6 +35,12 @@ module Plz
         Commands::InvalidSchema.new(pathname: schema_file_pathname, error: @json_schema_error)
       when !has_base_url?
         Commands::BaseUrlNotFound.new(pathname: schema_file_pathname)
+      when has_help?
+        Commands::Help.new(options: options, schema: json_schema)
+      when !has_action_name?
+        Commands::NoActionName.new
+      when !has_target_name?
+        Commands::NoTargetName.new
       when !has_link?
         Commands::LinkNotFound.new(
           pathname: schema_file_pathname,
