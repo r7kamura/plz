@@ -1,3 +1,6 @@
+## 0.0.8
+* Fix bug :bug:
+
 ## 0.0.7
 * Add command examples in help message
 
