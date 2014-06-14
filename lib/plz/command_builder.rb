@@ -16,6 +16,7 @@ module Plz
       :target_name,
       :headers,
       :params,
+      :has_invalid_json_input?,
       to: :arguments,
     )
 
@@ -47,6 +48,8 @@ module Plz
           action_name: action_name,
           target_name: target_name
         )
+      when has_invalid_json_input?
+        Commands::InvalidJsonFromStdin.new
       when has_unparsable_json_param?
         Commands::UnparsableJsonParam.new(error: @json_parse_error)
       else

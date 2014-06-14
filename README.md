@@ -54,6 +54,14 @@ while `key:=value` is parsed into JSON value (e.g. key:=17 will be `{"key":17}`)
 $ plz create user name=alice age:=17
 ```
 
+### Stdin
+You can pass params via STDIN, instead of command line arguments.
+
+```sh
+$ plz create user < params.json
+$ cat params.json | plz create user
+```
+
 ### Options
 Plz takes some command line options.
 
