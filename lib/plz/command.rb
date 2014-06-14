@@ -42,7 +42,7 @@ module Plz
 
     # @return [true, false]
     def flag_to_show_response_header
-      !!@options[:"response-header"]
+      !@options[:"no-response-header"]
     end
 
     # @return [true, false]

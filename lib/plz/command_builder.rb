@@ -207,8 +207,8 @@ module Plz
     def options
       @options ||= Slop.parse!(@argv, help: true) do
         banner Error::USAGE
-        on "response-header", "Show response header (default: false)"
-        on "no-color", "Disable coloring output (default: false)"
+        on "no-response-header", "Hide response header"
+        on "no-color", "Disable coloring output"
       end.to_hash
     end
 
