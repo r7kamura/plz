@@ -22,7 +22,7 @@ module Plz
             link.href && link.method && link.title
           end.map do |link|
             str = "  plz #{link.title.underscore} #{target_name}"
-            if key = link.href[/{(.+)}/, 1]
+            if key = link.href[/{(.+?)}/, 1]
               path = CGI.unescape(key).gsub(/[()]/, "")
               name = path.split("/").last
               if property = JsonPointer.evaluate(@schema.data, path)
