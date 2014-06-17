@@ -185,8 +185,18 @@ module Plz
     end
 
     # @return [String, nil] Base URL of the API
+    # @example
+    #   base_url #=> "http://localhost:8080"
     def base_url
-      @base_url ||= options[:host] || base_url_from_schema
+      @base_url ||= begin
+        if url = (options[:host] || base_url_from_schema)
+          if url.start_with?("http")
+            url
+          else
+            "http://#{url}"
+          end
+        end
+      end
     end
 
     # Extracts the base url of the API from JSON Schema
