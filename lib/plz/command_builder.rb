@@ -184,12 +184,17 @@ module Plz
       link.method.to_s.upcase
     end
 
-    # Extracts the base url of the API
+    # @return [String, nil] Base URL of the API
+    def base_url
+      @base_url ||= options[:host] || base_url_from_schema
+    end
+
+    # Extracts the base url of the API from JSON Schema
     # @return [String, nil]
     # @example
-    #   base_url #=> "https://api.example.com/"
-    def base_url
-      @base_url ||= json_schema.links.find do |link|
+    #   base_url_from_schema #=> "https://api.example.com/"
+    def base_url_from_schema
+      json_schema.links.find do |link|
         if link.href && link.rel == "self"
           return link.href
         end
@@ -227,6 +232,7 @@ module Plz
       @options ||= Slop.parse!(@argv) do
         banner Error::USAGE
         on "h", "help", "Display help message"
+        on "H", "host=", "API host"
         on "no-color", "Disable coloring output"
         on "no-response-body", "Hide response body"
         on "no-response-header", "Hide response header"

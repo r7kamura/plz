@@ -69,6 +69,7 @@ Plz takes some command line options.
 $ plz --help
 Usage: plz <action> <target> [headers|params] [options]
     -h, --help                    Display help message
+    -H, --host                    API host
         --no-color                Disable coloring output
         --no-response-body        Hide response body
         --no-response-header      Hide response header

@@ -1,3 +1,6 @@
+## 0.1.2
+* Provide --host option to change API host
+
 ## 0.1.1
 * Provide support for reading STDIN
 
