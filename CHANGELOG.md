@@ -1,3 +1,6 @@
+## 0.1.3
+* Fix --host option
+
 ## 0.1.2
 * Provide --host option to change API host
 
