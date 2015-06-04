@@ -1,3 +1,6 @@
+## 0.1.5
+* Fix slop version with v3
+
 ## 0.1.4
 * Fix wrong keyword arguments definitions
 
