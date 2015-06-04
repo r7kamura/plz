@@ -1,7 +1,7 @@
 module Plz
   module Commands
     class InvalidSchema
-      def initialize(pathname: nil, error: error)
+      def initialize(pathname: nil, error: nil)
         @pathname = pathname
         @error = error
       end

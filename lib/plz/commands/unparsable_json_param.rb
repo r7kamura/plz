@@ -1,7 +1,7 @@
 module Plz
   module Commands
     class UnparsableJsonParam
-      def initialize(error: error)
+      def initialize(error: nil)
         @error = error
       end
 
