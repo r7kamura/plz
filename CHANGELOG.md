@@ -1,3 +1,7 @@
+## v0.1.6
+
+- Fix rouge version with `< 2.0.0`
+
 ## v0.1.5
 
 -  Fix slop version with v3
