@@ -1,50 +1,65 @@
-## 0.1.5
-* Fix slop version with v3
+## v0.1.5
 
-## 0.1.4
-* Fix wrong keyword arguments definitions
+-  Fix slop version with v3
 
-## 0.1.3
-* Fix --host option
+## v0.1.4
 
-## 0.1.2
-* Provide --host option to change API host
+-  Fix wrong keyword arguments definitions
 
-## 0.1.1
-* Provide support for reading STDIN
+## v0.1.3
 
-## 0.1.0
-* Shape up --help feature
+- Fix --host option
 
-## 0.0.9
-* Show example args if URI Template and example value defined
+## v0.1.2
 
-## 0.0.8
-* Fix bug :bug:
+- Provide --host option to change API host
 
-## 0.0.7
-* Add command examples in help message
+## v0.1.1
 
-## 0.0.6
-* Better error handling
-* Add some command line options
- * `--help`
- * `--no-color`
- * `--no-response-header`
- * `--no-response-body`
+- Provide support for reading STDIN
 
-## 0.0.5
-* Support URI Template in API path
+## v0.1.0
 
-## 0.0.4
-* Implement headers & params parser
+- Shape up --help feature
 
-## 0.0.3
-* Color header value
+## v0.0.9
 
-## 0.0.2
-* cURL-like output
-* Color output
+- Show example args if URI Template and example value defined
 
-## 0.0.1
-* 1st release
+## v0.0.8
+
+- Fix bug :bug:
+
+## v0.0.7
+
+- Add command examples in help message
+
+## v0.0.6
+
+- Better error handling
+- Add some command line options
+    - `--help`
+    - `--no-color`
+    - `--no-response-header`
+    - `--no-response-body`
+
+## v0.0.5
+
+- Support URI Template in API path
+
+## v0.0.4
+
+- Implement headers & params parser
+
+## v0.0.3
+
+- Color header value
+
+## v0.0.2
+
+- cURL-like output
+- Color output
+
+## v0.0.1
+
+- 1st release
