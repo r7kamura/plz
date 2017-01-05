@@ -45,8 +45,8 @@ module Plz
       when !has_link?
         Commands::LinkNotFound.new(
           pathname: schema_file_pathname,
-          action_name: nil,
-          target_name: nil
+          action_name: action_name,
+          target_name: target_name,
         )
       when has_invalid_json_input?
         Commands::InvalidJsonFromStdin.new
