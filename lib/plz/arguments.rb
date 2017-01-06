@@ -7,12 +7,12 @@ module Plz
 
     # @return [String, nil] Given action name
     def action_name
-      ARGV[0]
+      @argv[0]
     end
 
     # @return [String, nil] Given target name
     def target_name
-      ARGV[1]
+      @argv[1]
     end
 
     # @return [Hash] Params parsed from given arguments & STDIN
@@ -23,7 +23,7 @@ module Plz
 
     # @return [Hash] Headers parsed from given arguments
     def headers
-      ARGV[2..-1].inject({}) do |result, section|
+      @argv[2..-1].inject({}) do |result, section|
         case
         when /(?<key>.+):(?<value>[^=]+)/ =~ section
           result.merge(key => value)
@@ -56,7 +56,7 @@ module Plz
 
     # @return [Hash] Params extracted from ARGV
     def params_from_argv
-      @params_from_argv ||= ARGV[2..-1].inject({}) do |result, section|
+      @params_from_argv ||= @argv[2..-1].inject({}) do |result, section|
         case
         when /(?<key>.+):=(?<value>.+)/ =~ section
           begin
