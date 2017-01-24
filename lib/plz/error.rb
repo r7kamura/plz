@@ -1,6 +1,6 @@
 module Plz
   class Error < StandardError
-    USAGE = "Usage: plz <action> <target> [headers|params] [options]"
+    USAGE = "Usage: #{$0} <action> <target> [headers|params] [options]"
   end
 
   class UnparsableJsonParam < Error
