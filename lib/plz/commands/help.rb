@@ -17,11 +17,12 @@ module Plz
 
       # @return [Array<String>]
       def links
+        prog_name = File.basename($0)
         @schema.properties.map do |target_name, schema|
           schema.links.select do |link|
             link.href && link.method && link.title
           end.map do |link|
-            str = "  #{$0} #{link.title.underscore} #{target_name}"
+            str = "  #{prog_name} #{link.title.underscore} #{target_name}"
             if key = link.href[/{(.+?)}/, 1]
               path = CGI.unescape(key).gsub(/[()]/, "")
               name = path.split("/").last
