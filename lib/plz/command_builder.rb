@@ -148,7 +148,7 @@ module Plz
     # @example
     #   path_with_template #=> "/apps/%{id}"
     def path_with_template
-      link.href.gsub(/{(.+)}/) do |matched|
+      link.href.gsub(/{(.+?)}/) do |matched|
         key = CGI.unescape($1).gsub(/[()]/, "").split("/").last
         "%{#{key}}"
       end
@@ -158,8 +158,8 @@ module Plz
     # @exmaple
     #   path_keys #=> ["id"]
     def path_keys
-      link.href.scan(/{(.+)}/).map do |str|
-        CGI.unescape($1).gsub(/[()]/, "").split("/").last
+      link.href.scan(/{(.+?)}/).map do |gr|
+        CGI.unescape(gr.first).gsub(/[()]/, "").split("/").last
       end
     end
 
