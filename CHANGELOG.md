@@ -1,3 +1,8 @@
+## v0.1.7
+
+- Support multi path parameters
+- Improve program name on help message
+
 ## v0.1.6
 
 - Fix rouge version with `< 2.0.0`
