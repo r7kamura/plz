@@ -52,6 +52,12 @@ module Plz
         Commands::InvalidJsonFromStdin.new
       when has_unparsable_json_param?
         Commands::UnparsableJsonParam.new(error: @json_parse_error)
+      when !missing_path_params.empty?
+        Commands::MissingPathParams.new(
+          action_name: action_name,
+          target_name: target_name,
+          params: path_keys,
+        )
       else
         Commands::Request.new(
           method: method,
@@ -76,7 +82,7 @@ module Plz
 
     # @return [true, false] True if --help or -h given
     def has_help?
-      options[:help]
+      options[:help] || action_name == "help"
     end
 
     # @return [true, false] True if given arguments include action name
@@ -168,6 +174,11 @@ module Plz
     #   path_params #=> { "id" => 1 }
     def path_params
       params.slice(*path_keys)
+    end
+
+    # @return [Array<String>] Parameter names required for path but not provided
+    def missing_path_params
+      path_keys - params.keys
     end
 
     # @return [Hash] Params to be used for request body or query string
