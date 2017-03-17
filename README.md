@@ -17,7 +17,7 @@ $ plz <action> <target> [headers|params] [options]
          |        |         |      |           --no-color
          |        |         |      |           --help, -h
          |        |         |      |
-         |        |         |      `---------- key=value or key:=value
+         |        |         |      `---------- key=value | key:=value | key=:value
          |        |         |
          |        |         `----------------- Key:value
          |        |
@@ -46,13 +46,17 @@ Params are used for the following purpose:
 * Query string in GET method
 * Request body in other methods
 
-You can set params by `key=value` or `key:=value` syntax in command line argument.
-`key=value` is parsed into String value,
-while `key:=value` is parsed into JSON value (e.g. key:=17 will be `{"key":17}`).
+You can set params by `key=value`, `key:=value`, or `key=:value` syntax in command line arguments.
+`key:=value` is parsed into a JSON value (e.g. key:=17 will be `{"key":17}`),
+while `key=:value` is parsed into a String value.
+`key=value` will try to parse into a JSON value, and fall back to a String value.
 
 ```sh
-$ plz create user name=alice age:=17
+$ plz create user name=alice age:=17 birthday=:2000-02-24
 ```
+
+As a special case, if the first argument after the target is not a header or param assignment,
+it will be treated like `target=argument`, i.e. assign the argument to a parameter named after the target.
 
 ### Stdin
 You can pass params via STDIN, instead of command line arguments.

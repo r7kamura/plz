@@ -23,12 +23,10 @@ module Plz
 
     # @return [Hash] Headers parsed from given arguments
     def headers
-      @argv[2..-1].inject({}) do |result, section|
+      @argv[2..-1].each_with_object({}) do |section, result|
         case
-        when /(?<key>.+):(?<value>[^=]+)/ =~ section
-          result.merge(key => value)
-        else
-          result
+        when /(?<key>.+)(?<!=):(?!=)(?<value>.+)/ =~ section
+          result[key] = value
         end
       end
     end
@@ -56,18 +54,31 @@ module Plz
 
     # @return [Hash] Params extracted from ARGV
     def params_from_argv
-      @params_from_argv ||= @argv[2..-1].inject({}) do |result, section|
+      @params_from_argv ||= @argv[2..-1].each_with_index.with_object({}) do |(section, i), result|
         case
         when /(?<key>.+):=(?<value>.+)/ =~ section
           begin
-            result.merge(key => JSON.parse(%<{"key":#{value}}>)["key"])
+            result[key] = JSON.parse(%<{"key":#{value}}>)["key"]
           rescue JSON::ParserError
             raise UnparsableJsonParam, value: value
           end
+        when /(?<key>.+)=:(?<value>.+)/ =~ section
+          result[key] = value
         when /(?<key>.+)=(?<value>.+)/ =~ section
-          result.merge(key => value)
-        else
-          result
+          begin
+            result[key] = JSON.parse(%<{"key":#{value}}>)["key"]
+          rescue JSON::ParserError
+            result[key] = value
+          end
+        when i.zero? && section !~ /:/
+          # special case for the first argument - treat it like "target=argument"
+          key = target_name
+          value = section
+          begin
+            result[key] = JSON.parse(%<{"key":#{value}}>)["key"]
+          rescue JSON::ParserError
+            result[key] = value
+          end
         end
       end
     end

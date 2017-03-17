@@ -23,12 +23,16 @@ module Plz
             link.href && link.method && link.title
           end.map do |link|
             str = "  #{prog_name} #{link.title.underscore} #{target_name}"
-            link.href.scan(/{(.+?)}/).each do |gr|
+            link.href.scan(/{(.+?)}/).each_with_index do |gr, i|
               path = CGI.unescape(gr.first).gsub(/[()]/, "")
               name = path.split("/").last
               if property = JsonPointer.evaluate(@schema, path)
                 example = property.data.fetch("example", "<>")
-                str << " #{name}=#{example}"
+                if i.zero? && name == target_name
+                  str << " [#{name}=]#{example}"
+                else
+                  str << " #{name}=#{example}"
+                end
               end
             end
             str
