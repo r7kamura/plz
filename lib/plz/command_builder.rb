@@ -37,7 +37,12 @@ module Plz
       when !has_base_url?
         Commands::BaseUrlNotFound.new(pathname: schema_file_pathname)
       when has_help?
-        Commands::Help.new(options: options, schema: json_schema)
+        Commands::Help.new(
+          options: options,
+          schema: json_schema,
+          action: action_name,
+          target: target_name,
+        )
       when !has_action_name?
         Commands::NoActionName.new
       when !has_target_name?
@@ -82,7 +87,7 @@ module Plz
 
     # @return [true, false] True if --help or -h given
     def has_help?
-      options[:help] || action_name == "help"
+      options[:help] || options[:'help-all'] || action_name == "help"
     end
 
     # @return [true, false] True if given arguments include action name
@@ -216,23 +221,13 @@ module Plz
     #   base_url_from_schema #=> "https://api.example.com/"
     def base_url_from_schema
       json_schema.links.find do |link|
-        if link.href && link.rel == "self"
-          return link.href
-        end
-      end
+        link.href && link.rel == "self"
+      end.href
     end
 
     # @return [JsonSchema::Schema::Link, nil]
     def link
-      @link ||= json_schema.properties.find do |key, schema|
-        if key == target_name
-          schema.links.find do |link|
-            if link.href && link.method && link.title.underscore == action_name
-              return link
-            end
-          end
-        end
-      end
+      @link ||= links.action_link(action_name, target_name)
     end
 
     # @return [JsonSchema::Schema, nil]
@@ -248,11 +243,17 @@ module Plz
       @arguments ||= Arguments.new(@argv)
     end
 
+    # @return [Plz::Links] Wrapper of JSON Schema
+    def links
+      @links ||= Links.new(json_schema)
+    end
+
     # @return [Hash] Command line options
     def options
       @options ||= Slop.parse!(@argv) do
         banner Error::USAGE
         on "h", "help", "Display help message"
+        on "help-all", "Display help message with all examples"
         on "H", "host=", "API host"
         on "no-color", "Disable coloring output"
         on "no-response-body", "Hide response body"
