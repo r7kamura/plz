@@ -41,6 +41,10 @@ module Plz
             end
           end
         end
+
+        if @target && @target != "all"
+          puts %<\nProperties for target `#{@target}`:\n  #{Array(describe_properties(@target)).join("\n  ")}>
+        end
       end
 
       private
@@ -77,6 +81,33 @@ module Plz
       # @return [String]
       def prog_name
         @prog_name ||= File.basename($0)
+      end
+
+      # @param target [String]
+      # @return [Array<String>,nil]
+      def describe_properties(target)
+        if (target_schema = @schema.properties[@target])
+          target_schema.properties.map do |name, prop_schema|
+            info = case
+                   when prop_schema.read_only?
+                     next
+                   when prop_schema.data.has_key?("example")
+                     example = prop_schema.data['example']
+                     while example.is_a?(Hash) && example['$ref'] =~ %r<^#/>
+                       example = JsonPointer.evaluate(@schema.data, example['$ref'])
+                     end
+                     if example
+                       "e.g. #{example.inspect}"
+                     end
+                   when !prop_schema.type.empty?
+                     prop_schema.type.map(&:capitalize).join("|")
+                   end
+            descr = [info, prop_schema.description].compact.join(" - ")
+            descr = "sorry, no help here :-(" if descr.empty?
+            required = target_schema.required.include?(name) ? "REQUIRED" : "optional"
+            "(#{required}) #{name} : #{descr}"
+          end.compact
+        end
       end
     end
   end
