@@ -19,16 +19,32 @@ module Plz
       # Sends an HTTP request and logs out the response
       def call
         response = client.send(@method.downcase, @path, @params, @headers)
-        print ResponseRenderer.call(
-          status: response.status,
-          headers: response.headers,
-          body: response.body,
-          response_header: flag_to_show_response_header,
-          response_body: flag_to_show_response_body,
-          color: flag_to_color_response,
-        )
+        catch :skip_renderer do
+          @process_response_block.call(response) if @process_response_block
+          puts ResponseRenderer.call(
+            status: response.status,
+            headers: response.headers,
+            body: response.body,
+            response_header: flag_to_show_response_header,
+            response_body: flag_to_show_response_body,
+            color: flag_to_color_response,
+          )
+        end
       rescue Faraday::ConnectionFailed => exception
         puts exception
+      end
+
+      # The provided block will be called with the Faraday connection object.
+      # It may be used to set up more middleware.
+      def customize_client(&block)
+        @customize_client_block = block
+      end
+
+      # The provided block will be called with the Faraday response object
+      # before the response renderer. If it throws :skip_renderer, the response
+      # renderer will not be called afterward.
+      def process_response(&block)
+        @process_response_block = block
       end
 
       private
@@ -37,8 +53,9 @@ module Plz
       def client
         Faraday.new(url: @base_url) do |connection|
           connection.request :json
-          connection.response :json
-          connection.adapter :net_http
+          @customize_client_block.call(connection) if @customize_client_block
+          connection.response :json, content_type: /\bjson$/
+          connection.adapter Faraday.default_adapter
         end
       end
 

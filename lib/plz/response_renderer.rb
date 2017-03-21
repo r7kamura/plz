@@ -71,8 +71,9 @@ module Plz
     # @return [String]
     def body
       if @color_response
+        lexer = body_is_json? ? Rouge::Lexers::Javascript : Rouge::Lexers::HTML
         Rouge::Formatters::Terminal256.format(
-          Rouge::Lexers::Javascript.new.lex(plain_body),
+          lexer.new.lex(plain_body),
           theme: "github"
         )
       else
@@ -80,9 +81,14 @@ module Plz
       end
     end
 
-    # @return [String] Pretty-printed JSON body
+    # @return [String] Pretty-printed JSON body, if the response was a JSON object
     def plain_body
-      JSON.pretty_generate(@body) + "\n"
+      body_is_json? ? JSON.pretty_generate(@body) : @body
+    end
+
+    # @return [true, false]
+    def body_is_json?
+      !@body.is_a?(String)
     end
 
     # Overridden to disable coloring
