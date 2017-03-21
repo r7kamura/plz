@@ -1,12 +1,15 @@
 module Plz
   module Commands
     class UndecodableSchemaFile
-      def initialize(pathname: nil)
-        @pathname = pathname
+      def initialize(filename: nil, error: nil)
+        @filename = filename
+        @error = error
       end
 
       def call
-        puts "Failed to decode #{@pathname}"
+        message = "Failed to decode #{@filename}"
+        message << ": #{@error}" if @error
+        puts message
       end
     end
   end

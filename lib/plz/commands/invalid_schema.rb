@@ -1,13 +1,13 @@
 module Plz
   module Commands
     class InvalidSchema
-      def initialize(pathname: nil, error: nil)
-        @pathname = pathname
+      def initialize(filename: nil, error: nil)
+        @filename = filename
         @error = error
       end
 
       def call
-        puts "#{@pathname} was invalid:#{error_message}"
+        puts "#{@filename} was invalid:#{error_message}"
       end
 
       private

@@ -1,12 +1,12 @@
 module Plz
   module Commands
     class BaseUrlNotFound
-      def initialize(pathname: nil)
-        @pathname = pathname
+      def initialize(filename: nil)
+        @filename = filename
       end
 
       def call
-        puts "#{@pathname} has no base URL at top-level links property"
+        puts "#{@filename} has no base URL at top-level links property"
       end
     end
   end

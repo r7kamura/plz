@@ -31,11 +31,11 @@ module Plz
       when !has_schema_file?
         Commands::SchemaFileNotFound.new
       when !has_decodable_schema_file?
-        Commands::UndecodableSchemaFile.new(pathname: schema_file_pathname)
+        Commands::UndecodableSchemaFile.new(filename: schema_file_name, error: @read_error)
       when !has_valid_schema_file?
-        Commands::InvalidSchema.new(pathname: schema_file_pathname, error: @json_schema_error)
+        Commands::InvalidSchema.new(filename: schema_file_name, error: @json_schema_error)
       when !has_base_url?
-        Commands::BaseUrlNotFound.new(pathname: schema_file_pathname)
+        Commands::BaseUrlNotFound.new(filename: schema_file_name)
       when has_help?
         Commands::Help.new(
           options: options,
@@ -49,7 +49,7 @@ module Plz
         Commands::NoTargetName.new
       when !has_link?
         Commands::LinkNotFound.new(
-          pathname: schema_file_pathname,
+          filename: schema_file_name,
           action_name: action_name,
           target_name: target_name,
         )
@@ -102,7 +102,8 @@ module Plz
 
     # @return [true, false] True if schema file exists
     def has_schema_file?
-      !!schema_file_pathname
+      self.schema_file = options[:schema] if options[:schema]
+      !!schema_file
     end
 
     # @return [true, false] True if no error occured in parsing schema file as JSON Schema
@@ -128,7 +129,7 @@ module Plz
     # @return [Hash]
     def schema
       @schema ||= begin
-        case schema_file_pathname.extname
+        case schema_file_extname
         when ".yml"
           YAML.load(schema_file_body)
         else
@@ -138,14 +139,52 @@ module Plz
     rescue
     end
 
-    # @return [String]
-    def schema_file_body
-      @schema_file_body ||= schema_file_pathname.read
+    # @return [String] Extension of schema file
+    def schema_file_extname
+      case schema_file
+      when Pathname
+        schema_file.extname
+      when URI
+        String(schema_file.path[/\.[^.]+$/])
+      else
+        String(schema_file_name[/\.[^.]+$/])
+      end
     end
 
-    # @return [Pathname, nil] Found schema file path
-    def schema_file_pathname
-      @schema_file_pathname ||= Pathname.glob(SCHEMA_FILE_PATH_PATTERN).first
+    # @return [String]
+    def schema_file_body
+      @schema_file_body ||= begin
+        schema_file.read
+      rescue => exception
+        @read_error = exception
+      end
+    end
+
+    # @return [String] Schema file name
+    def schema_file_name
+      schema_file.to_s
+    end
+
+    # @return [Pathname, URI, nil] Given or found schema file
+    def schema_file
+      @schema_file ||= Pathname.glob(SCHEMA_FILE_PATH_PATTERN).first
+    end
+
+    # @param file [String, Pathname, URI] path to file, Pathname object,
+    #   URI object, or another object that responds to `read` and `to_s`
+    #   similarly to those
+    # @raise ArgumentError
+    def schema_file=(filename)
+      @schema_file = begin
+        if filename.is_a?(String)
+          uri = URI(filename)
+          uri.scheme ? uri : Pathname.new(filename)
+        elsif filename.respond_to?(:read) && filename.respond_to?(:to_s)
+          filename
+        else
+          raise ArgumentError, "Argument to schema_file= must be a String or a Pathname-like object"
+        end
+      end
     end
 
     # @return [String]
@@ -254,6 +293,7 @@ module Plz
         banner Error::USAGE
         on "h", "help", "Display help message"
         on "help-all", "Display help message with all examples"
+        on "s", "schema=", "Schema file or URL"
         on "H", "host=", "API host"
         on "no-color", "Disable coloring output"
         on "no-response-body", "Hide response body"
