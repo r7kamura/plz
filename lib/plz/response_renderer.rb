@@ -11,8 +11,9 @@ module Plz
     # @param response_header [true, false] Flag to show response header
     # @param response_body [true, false] Flag to show response body
     # @param color [true, false] Flag to color response body
-    def initialize(status: nil, headers: nil, body: nil, response_header: nil, response_body: nil, color: nil)
+    def initialize(status: nil, status_in_words: nil, headers: nil, body: nil, response_header: nil, response_body: nil, color: nil)
       @status = status
+      @status_in_words = status_in_words
       @headers = headers
       @body = body
       @show_response_header = response_header
@@ -60,12 +61,7 @@ module Plz
 
     # @return [String]
     def status
-      Rainbow("#{@status} #{status_in_words}").bright
-    end
-
-    # @return [String] Words for its status code
-    def status_in_words
-      Rack::Utils::HTTP_STATUS_CODES[@status]
+      Rainbow("#{@status} #{@status_in_words}").bright
     end
 
     # @return [String]

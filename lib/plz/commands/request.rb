@@ -23,6 +23,7 @@ module Plz
           @process_response_block.call(response) if @process_response_block
           puts ResponseRenderer.call(
             status: response.status,
+            status_in_words: response.reason_phrase,
             headers: response.headers,
             body: response.body,
             response_header: flag_to_show_response_header,
