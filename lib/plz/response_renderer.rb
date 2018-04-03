@@ -67,10 +67,10 @@ module Plz
     # @return [String]
     def body
       if @color_response
-        lexer = body_is_json? ? Rouge::Lexers::Javascript : Rouge::Lexers::HTML
+        lexer = body_is_json? ? Rouge::Lexers::JSON : Rouge::Lexers::HTML
         Rouge::Formatters::Terminal256.format(
           lexer.new.lex(plain_body),
-          theme: "github"
+          theme: "monokai"
         )
       else
         plain_body
