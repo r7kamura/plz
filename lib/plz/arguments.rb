@@ -25,7 +25,7 @@ module Plz
     def headers
       @argv[2..-1].each_with_object({}) do |section, result|
         case
-        when /(?<key>.+)(?<!=):(?!=)(?<value>.+)/ =~ section
+        when /^(?<key>[^=]+):(?!=)(?<value>.+)/ =~ section
           result[key] = value
         end
       end
@@ -56,15 +56,15 @@ module Plz
     def params_from_argv
       @params_from_argv ||= @argv[2..-1].each_with_index.with_object({}) do |(section, i), result|
         case
-        when /(?<key>.+):=(?<value>.+)/ =~ section
+        when /^(?<key>.+):=(?<value>.+)/ =~ section
           begin
             result[key] = JSON.parse(%<{"key":#{value}}>)["key"]
           rescue JSON::ParserError
             raise UnparsableJsonParam, value: value
           end
-        when /(?<key>.+)=:(?<value>.+)/ =~ section
+        when /^(?<key>.+)=:(?<value>.+)/ =~ section
           result[key] = value
-        when /(?<key>.+)=(?<value>.+)/ =~ section
+        when /^(?<key>.+)=(?<value>.+)/ =~ section
           begin
             result[key] = JSON.parse(%<{"key":#{value}}>)["key"]
           rescue JSON::ParserError
